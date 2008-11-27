@@ -5,7 +5,7 @@
 -- License     :  GPL-style
 --
 -- Maintainer  :  Reiner Pope <reiner.pope@gmail.com>
--- Stability   :  provisional
+-- Stability   :  experimental
 -- Portability :  portable
 --
 -- QuasiQuoting for matrices and vectors.

@@ -4,6 +4,8 @@ Synopsis:      hmatrix with vector and matrix sizes encoded in types
 License:       GPL
 Author:	       Reiner Pope
 Maintainer:    Reiner Pope <reiner.pope@gmail.com>
+Stability:     experimental
+
 Cabal-Version: >= 1.2
 build-type:    Simple
 
