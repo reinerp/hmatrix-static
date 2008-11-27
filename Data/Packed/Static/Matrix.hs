@@ -12,9 +12,6 @@
 --
 -----------------------------------------------------------------------------
 
-{-# OPTIONS -fglasgow-exts #-}
-{-# LANGUAGE NoMonomorphismRestriction #-}
-
 module Data.Packed.Static.Matrix(
   Matrix,
   -- * Shaping

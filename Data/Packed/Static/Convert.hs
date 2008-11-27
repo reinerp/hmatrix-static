@@ -12,9 +12,6 @@
 --
 -----------------------------------------------------------------------------
 
-{-# LANGUAGE NoMonomorphismRestriction #-}
-{-# OPTIONS -fglasgow-exts #-}
-
 module Data.Packed.Static.Convert where
 
 import qualified Data.Packed.Convert as HS

@@ -12,9 +12,6 @@
 --
 -----------------------------------------------------------------------------
 
-{-# LANGUAGE NoMonomorphismRestriction #-}
-{-# OPTIONS -fglasgow-exts #-}
-
 module Data.Packed.Static.ST where
 
 import qualified Data.Packed.ST as HS

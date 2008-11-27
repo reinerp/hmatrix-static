@@ -1,5 +1,3 @@
-{-# LANGUAGE UndecidableInstances #-}
-
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Packed.Static.Shapes
@@ -13,6 +11,8 @@
 -- Shape-based functionality, common for matrices and vectors
 --
 -----------------------------------------------------------------------------
+
+{-# LANGUAGE UndecidableInstances #-}
 
 module Data.Packed.Static.Shapes (
      Unknown,

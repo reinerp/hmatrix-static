@@ -42,6 +42,6 @@ Library
        ScopedTypeVariables, FlexibleContexts,
        FlexibleInstances, MultiParamTypeClasses,
        Rank2Types, TypeFamilies, TypeOperators,
-       EmptyDataDecls
+       EmptyDataDecls, TemplateHaskell
 
   Build-Depends: base, hmatrix, tfp, array, haskell-src-meta, parsec, template-haskell

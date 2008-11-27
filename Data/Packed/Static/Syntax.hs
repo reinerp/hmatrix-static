@@ -12,8 +12,6 @@
 --
 -----------------------------------------------------------------------------
 
-{-# LANGUAGE NoMonomorphismRestriction, TemplateHaskell, QuasiQuotes #-}
-
 module Data.Packed.Static.Syntax(mat,vec,vecD,vecC,viewVec) where
 
 import Data.Complex
