@@ -1,6 +1,7 @@
 - documentation!
 - Numeric.LinearAlgebra.Static.Interface (for matrix multiplication, etc)
 - quasiquoter:
+     - type-incorrect generated code by vec!
      - fix infix operators (pending haskell-src-meta changes)
      - incorporate view patterns into quasiquote (pending TH changes)
      - matrix pattern quasiquoter
