@@ -1,4 +1,5 @@
 - documentation!
+- Numeric.LinearAlgebra.Static.Interface (for matrix multiplication, etc)
 - quasiquoter:
      - fix infix operators (pending haskell-src-meta changes)
      - incorporate view patterns into quasiquote (pending TH changes)
