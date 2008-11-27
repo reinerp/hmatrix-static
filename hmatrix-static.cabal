@@ -5,7 +5,20 @@ License:       GPL
 Author:	       Reiner Pope
 Maintainer:    Reiner Pope <reiner.pope@gmail.com>
 Stability:     experimental
-
+Homepage:      http://code.haskell.org/hmatrix-static/
+Description:   A thin, lightweight wrapper over hmatrix to support
+               static checking of matrix and vector sizes (for instance,
+	       addition of different-sized vectors will be disallowed
+	       at compile-time). 
+	       .
+	       Objects whose sizes are not statically known are given
+	       the special size 'Unknown', which allows a syntactically
+	       cheap way to step down to the statically unchecked system 
+	       of hmatrix. This is cheap in comparison to representing
+	       unknown sizes with exisential types, which forces rampant
+	       continuation passing style.
+Category:      Math
+Tested-with:   GHC == 6.10.1
 Cabal-Version: >= 1.2
 build-type:    Simple
 
