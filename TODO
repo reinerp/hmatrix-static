@@ -1,0 +1,13 @@
+- documentation!
+- quasiquoter:
+     - fix infix operators (pending haskell-src-meta changes)
+     - incorporate view patterns into quasiquote (pending TH changes)
+     - matrix pattern quasiquoter
+- ShapedContainer has "Unwrapped" as a type synonym family. Since its instances
+  are bijective, it should be made a data family. This requires flipping
+  it around to be the "Wrapped" type since the unwrapped type is already
+  defined in hmatrix.
+- The safety of "Unknown" is unclear. Simply creating an "Unknown" value is
+  completely safe, as is refining one. However, e.g., adding two Unknown values
+  is not.
+- move Data.Packed.Static.Syntax.parsecToQ to a better place.

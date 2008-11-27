@@ -1,0 +1,32 @@
+Name:          hmatrix-static
+Version:       0.0
+Synopsis:      hmatrix with vector and matrix sizes encoded in types
+License:       GPL
+Author:	       Reiner Pope
+Maintainer:    Reiner Pope <reiner.pope@gmail.com>
+Cabal-Version: >= 1.2
+build-type:    Simple
+
+Library
+  Exposed-Modules:
+       Data.Packed.Static,
+       Data.Packed.Static.Vector,
+       Data.Packed.Static.Matrix,
+       Data.Packed.Static.ST,
+       Data.Packed.Static.Syntax,
+       Data.Packed.Static.Convert,
+       Data.Packed.Static.Imports,
+       Data.Packed.Static.Shapes,
+       Numeric.LinearAlgebra.Static,
+       Numeric.LinearAlgebra.Static.Algorithms
+  Other-Modules:
+       Data.Packed.Static.Internal,
+       Data.Packed.Static.Internal.Vector,
+       Data.Packed.Static.Internal.Matrix
+  Extensions:
+       ScopedTypeVariables, FlexibleContexts,
+       FlexibleInstances, MultiParamTypeClasses,
+       Rank2Types, TypeFamilies, TypeOperators,
+       EmptyDataDecls
+
+  Build-Depends: base, hmatrix, tfp, array, haskell-src-meta, parsec, template-haskell
