@@ -2,6 +2,7 @@ Name:          hmatrix-static
 Version:       0.0
 Synopsis:      hmatrix with vector and matrix sizes encoded in types
 License:       GPL
+License-file:  LICENSE
 Author:	       Reiner Pope
 Maintainer:    Reiner Pope <reiner.pope@gmail.com>
 Stability:     experimental
