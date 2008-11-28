@@ -14,8 +14,8 @@
 
 module Data.Packed.Static.Imports(
    H.Element,
-   H.Field(..),
-   F.Storable(..),
+   H.Field,
+   F.Storable,
    module Types.Data.Num,
    True,
    (:<=:),

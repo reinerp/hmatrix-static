@@ -18,12 +18,12 @@ module Data.Packed.Static(
      module Data.Packed.Static.Vector,
      module Data.Packed.Static.Matrix,
      module Data.Packed.Static.Syntax,
-     module Types.Data.Num,
+     module Data.Packed.Static.Imports,
  ) where
 
 import Data.Packed.Static.Shapes
 import Data.Packed.Static.Vector
 import Data.Packed.Static.Matrix
 import Data.Packed.Static.Syntax
+import Data.Packed.Static.Imports
 
-import Types.Data.Num
