@@ -15,6 +15,7 @@
 module Data.Packed.Static.Imports(
    H.Element,
    H.Field,
+   H.Linear,
    F.Storable,
    module Types.Data.Num,
    True,

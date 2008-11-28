@@ -33,7 +33,8 @@ Library
        Data.Packed.Static.Imports,
        Data.Packed.Static.Shapes,
        Numeric.LinearAlgebra.Static,
-       Numeric.LinearAlgebra.Static.Algorithms
+       Numeric.LinearAlgebra.Static.Algorithms,
+       Numeric.LinearAlgebra.Static.Interface
   Other-Modules:
        Data.Packed.Static.Internal,
        Data.Packed.Static.Internal.Vector,
