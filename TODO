@@ -1,10 +1,8 @@
 - documentation!
 - Numeric.LinearAlgebra.Static.Interface (for matrix multiplication, etc)
 - quasiquoter:
-     - type-incorrect generated code by vec!
      - fix infix operators (pending haskell-src-meta changes)
      - incorporate view patterns into quasiquote (pending TH changes)
-     - matrix pattern quasiquoter
 - ShapedContainer has "Unwrapped" as a type synonym family. Since its instances
   are bijective, it should be made a data family. This requires flipping
   it around to be the "Wrapped" type since the unwrapped type is already

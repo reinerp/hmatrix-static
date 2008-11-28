@@ -107,15 +107,15 @@ withShape f = f m n where
     n = fromIntegerT (undefined :: n)
 
 withRows :: forall m n t. (PositiveT m) => (Int -> Matrix (m,n) t) -> Matrix (m,n) t
-withRows = ($m) where
+withRows = ($ m) where
     m = fromIntegerT (undefined :: m)
 
 withCols :: forall m n t. (PositiveT n) => (Int -> Matrix (m,n) t) -> Matrix (m,n) t
-withCols = ($n) where
+withCols = ($ n) where
     n = fromIntegerT (undefined :: n)
 
 withSquare :: forall n t. PositiveT n => (Int -> Matrix (n,n) t) -> Matrix (n,n) t
-withSquare = ($n) where
+withSquare = ($ n) where
     n = fromIntegerT (undefined :: n)
 
 --------- to/from lists

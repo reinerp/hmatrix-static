@@ -10,9 +10,22 @@
 --
 -- QuasiQuoting for matrices and vectors.
 --
+-- BIG WARNING: the expression quasiquoters for matrices and vectors
+-- are broken for infix expressions. All operators will be assumed to
+-- be left infix with infix level 9. To avoid unexpected parses, fully
+-- parenthesise all infix expressions.
 -----------------------------------------------------------------------------
 
-module Data.Packed.Static.Syntax(mat,vec,vecD,vecC,viewVec) where
+module Data.Packed.Static.Syntax(
+    mat,
+    vec,
+    -- * Matrix views
+    MatView,
+    viewMat,
+    -- * Vector views
+    VecView,
+    viewVec,
+ ) where
 
 import Data.Complex
 
@@ -22,6 +35,7 @@ import Language.Haskell.TH
 import Language.Haskell.TH.Quote
 
 import Types.Data.Num.Decimal.Literals.TH
+import Data.Packed.Static.Imports
 import Data.Packed.Static.Shapes
 import Data.Packed.Static.Vector
 import Data.Packed.Static.Matrix
@@ -37,57 +51,91 @@ import Foreign.Storable
 import qualified Language.Haskell.Meta.Parse as MP
 
 
+----- mat parser
+-- | Required for the 'mat' pattern quasiquoter. See 'mat'.
+data MatView n t = n :>< [[t]]
+-- | Required for the 'mat' pattern quasiquoter. See 'mat'.
+viewMat :: Element t => Matrix (m, n) t -> MatView (m, n) t
+viewMat m = shapeOf m :>< toLists m
+
+-- | The matrix quasiquoter for expressions and patterns. 
+-- 
+-- * Elements on the same row are separated by commas; rows 
+--   themselves are separated by semicolons. All whitespace is optional
+-- 
+-- * The expression quasiquoter allows arbitrary Haskell 
+--   expressions as its elements; the pattern quasiquoter
+--   requires that each element is a variable.
+-- 
+-- * Using the quasiquoter for patterns requires that you
+--   use the 'viewMat' view pattern first (this is a
+--    workaround since Template Haskell doesn't yet support
+--    view patterns).
+-- 
+-- For example,
+-- 
+-- @ example1 :: (Element t) => Matrix (D2,D3) t -> Matrix (D2,D2) t
+-- example1 (viewMat -> [$mat|a, b, c;
+--                            d, e, f|]) = [$mat|a+b,   b+c;
+--                                               sin c, f  |]@
 mat :: QuasiQuoter
-mat = QuasiQuoter parseExpM (error "No pattern qausiquoter for mat: use ... instead")
+mat = QuasiQuoter parseMatExp parseMatPat
 
-parseExpM s = parsecToQ (sepBy (sepBy expr comma) semi) s >>= mkQExpM where
-
-mkQExpM :: [[Exp]] -> ExpQ
-mkQExpM xs = do
-  let cols = length $ head xs
+parseMat p s = do
+  xs <- parsecToQ (sepBy (sepBy p comma) semi) s
+  let rows = length xs
+      cols = length $ head xs
   when (not $ all ((==cols) . length) xs) $ fail "Inconsistent row lengths in [$mat|...|]"
-  [| ( $(decLiteralV (fromIntegral $ length xs)) >< $(decLiteralV (fromIntegral cols)) )
+  return (xs,rows,cols)
+
+parseMatExp s = do
+  (xs,rows,cols) <- parseMat expr s
+  [| ( $(decLiteralV $ fromIntegral rows) >< $(decLiteralV $ fromIntegral cols) )
                 $(return $ ListE (concat xs)) |]
 
+parseMatPat s = do
+  (xs,rows,cols) <- parseMat identifier s
+  conP '(:><) [ sigP wildP (tupleT 2 `appT` (decLiteralT $ fromIntegral rows) `appT` (decLiteralT $ fromIntegral cols))
+              , listP (map (listP . map (varP . mkName)) xs) ]
 
-vec :: QuasiQuoter
-vec = QuasiQuoter parseExp (error "No pattern quasiquoter for vec: use vecD, vecC, or viewList instead")
+------- vec parser
+-- | Required for the 'vec' quasiquoter. See 'vec'.
+data VecView n t = n :|> [t]
 
--- | Pattern quasiquoter for vectors of Double.
-vecD :: QuasiQuoter
-vecD = QuasiQuoter (error "No expression quasiquoter for vecD: use vec instead") parsePatD
--- | Pattern quasiquoter for vectors of Complex Double.
-vecC :: QuasiQuoter
-vecC = QuasiQuoter (error "No expression quasiquoter for vecC: use vec instead") parsePatC
-
-newtype VecView n t = VecView [t]
-
--- | Views a vector with @VecView@; used for the pattern quasiquoters:
--- 
--- @ foo :: Vector D2 Double -> Double
--- foo (viewVec -> [$vecD|x,y|]) = x + y@
+-- | Required for the 'vec' quasiquoter. See 'vec'.
 viewVec :: (Storable t) => Vector n t -> VecView n t
-viewVec = VecView . toList
+viewVec v = shapeOf v :|> toList v
+
+-- | The vector quasiquoter for expressions and patterns. This is
+-- very similar to the 'mat' quasiquoter.
+-- 
+--  * Elements are separated by commas; whitespace is ignored.
+-- 
+--  * The expression quasiquoter allows arbitrary Haskell expressions for
+--    each element; the pattern quasiquoter requires that each element is
+--    a variable pattern.
+-- 
+--  * The pattern quasiquoter must be preceeded by a the 'viewVec' view pattern.
+-- 
+-- For example,
+-- 
+-- @ example2 :: (Storable t, Num t) => Vector D2 t -> Vector D3 t
+-- example2 (viewVec -> [$vec|a, b|]) = [$vec|a*b, 5, 7|]@
+vec :: QuasiQuoter
+vec = QuasiQuoter parseVecExp parseVecPat
 
 --- Vec pattern parser
-parsePatD s = mkQPatD =<< parsecToQ (sepBy identifier comma) s
+parseVec p s = parsecToQ (sepBy p comma) s
 
-mkQPatD :: [String] -> PatQ
-mkQPatD xs = sigP (return $ ConP 'VecView [ListP (map (VarP . mkName) xs)]) 
-                 ((conT ''VecView) `appT` (decLiteralT $ fromIntegral $ length xs) `appT` (conT ''Double))
+parseVecPat s = do
+  xs <- parseVec identifier s
+  conP '(:|>) [ sigP wildP (decLiteralT $ fromIntegral $ length xs)
+                         , return $ ListP (map (VarP . mkName) xs)  ]
 
-parsePatC s = mkQPatC =<< parsecToQ (sepBy identifier comma) s
+parseVecExp s = do
+  xs <- parseVec expr s
+  [| unsafeReshape (fromListU $(return $ ListE xs)) `atShape` $(decLiteralV (fromIntegral $ length xs)) |]
 
-mkQPatC :: [String] -> PatQ
-mkQPatC xs = sigP (return $ ConP 'VecView [ListP (map (VarP . mkName) xs)]) 
-                  ((conT ''VecView) `appT` (decLiteralT $ fromIntegral $ length xs) `appT` (conT ''Complex `appT` conT ''Double))
-
-
---- Vec expression parser
-parseExp s = parsecToQ (sepBy expr comma) s >>= mkQExp where
-
-mkQExp :: [Exp] -> ExpQ
-mkQExp xs = [| unsafeReshape (fromListsU $(return $ ListE xs)) `atShape` $(decLiteralV (fromIntegral $ length xs)) |]
 
 ----- Haskell parsing
 -- | Does a simplistic parse using Parsec, which just counts brackets and escapes comments and string literals.

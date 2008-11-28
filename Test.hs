@@ -2,17 +2,10 @@
 
 module Test where
 
-import Data.Packed.Static.Syntax
-import Data.Packed.Static.Vector
-import Data.Packed.Static.Matrix
+import Data.Packed.Static
 
-import Foreign.Storable
+foo :: (Storable t, Num t) => Vector D1 t -> Vector D3 t
+foo (viewVec -> [$vec|x|]) = [$vec|5,x,7|]
 
-import Types.Data.Num.Decimal
-import Types.Data.Num.Ops
-
---foo :: Vector D1 Double -> Vector D4 Double
---foo (viewVec -> [$vecD|x|]) = [$vec|5,6,7,x|]
-
---bar = [$mat|1,5;6,7|]
-
+bar :: (Element t) => Matrix (D2,D1) t -> Matrix (D2,D2) t
+bar (viewMat -> [$mat|x;z|]) = [$mat|x,5;6,7|]
