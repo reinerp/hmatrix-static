@@ -76,12 +76,7 @@ instance (ShapedContainer a, H.Linear (Unwrapped a) e) => H.Linear (a n) e where
 instance (ShapedContainer a, Eq (Unwrapped a t)) => Eq (a s t) where
     (==) = liftH2' (==)
 
-instance (ShapedContainer a, Show (Unwrapped a e)) => Show (a n e) where
-    showsPrec i = showsPrec i . unWrap
-    show = show . unWrap
-    showList = showList . map unWrap
-
-instance (ShapedContainer a, Num (Unwrapped a e)) => Num (a n e) where
+instance (ShapedContainer a, Show (a n e), Num (Unwrapped a e)) => Num (a n e) where
     (+) = liftH2 (+)
     (*) = liftH2 (*)
     (-) = liftH2 (-)
@@ -90,12 +85,12 @@ instance (ShapedContainer a, Num (Unwrapped a e)) => Num (a n e) where
     signum = liftH signum
     fromInteger = error "fromInteger: Data.Packed.Static.Common"
 
-instance (ShapedContainer a, Fractional (Unwrapped a e)) => Fractional (a n e) where
+instance (ShapedContainer a, Show (a n e), Fractional (Unwrapped a e)) => Fractional (a n e) where
     (/) = liftH2 (/)
     recip = liftH recip
     fromRational = error "fromRational: Data.Packed.Static.Common"
 
-instance (ShapedContainer a, Floating (Unwrapped a e)) => Floating (a n e) where
+instance (ShapedContainer a, Show (a n e), Floating (Unwrapped a e)) => Floating (a n e) where
     pi      = error "pi: Data.Packed.Static.Common"
     exp     = liftH exp
     sqrt    = liftH sqrt

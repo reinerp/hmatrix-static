@@ -38,6 +38,7 @@ module Data.Packed.Static.Vector(
  ) where
 
 import Data.Maybe(fromJust)
+import Data.List(intercalate)
 
 import qualified Numeric.LinearAlgebra as H
 
@@ -123,3 +124,7 @@ liftVector f = Vector . H.liftVector f . unVector
 liftVector2 :: (Storable a, Storable b, Storable c) =>
                (a -> b -> c) -> Vector n a -> Vector n b -> Vector n c
 liftVector2 f v1 v2 = Vector $ H.liftVector2 f (unVector v1) (unVector v2)
+
+instance (Storable e, Show e) => Show (Vector n e) where
+    show v = "[$vec| " ++ intercalate ", " (map show $ toList v) ++ " |]"
+

@@ -68,6 +68,7 @@ module Data.Packed.Static.Matrix(
 import Data.Array
 
 import Data.Maybe(fromJust)
+import Data.List(intercalate,transpose)
 import qualified Numeric.LinearAlgebra as H
 
 import Data.Packed.Static.Shapes
@@ -236,3 +237,20 @@ fromFile f s = fmap wrapU $ H.fromFile f s
 fromArray2D :: (Element t) => Array (Int, Int) t -> Matrix (Unknown,Unknown) t
 fromArray2D = wrapU . H.fromArray2D
 
+
+
+instance (Element e, Show e) => Show (Matrix (m,n) e) where
+    show m = "[$mat| " ++ format2 ", " ";\n       " m ++ " |]"
+
+-- internal helpers
+
+pad n str = replicate (n - length str) ' ' ++ str
+
+padLen :: [String] -> [String]
+padLen as = map (pad len) as where
+    len = maximum $ map length as
+
+padLens :: [[String]] -> [[String]]
+padLens = transpose . map padLen . transpose where
+
+format2 comma semi mat = intercalate semi . map (intercalate comma) $ padLens . map (map show) $ toLists mat
