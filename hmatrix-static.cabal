@@ -16,7 +16,7 @@ Description:   A thin, lightweight wrapper over hmatrix to support
 	       the special size 'Unknown', which allows a syntactically
 	       cheap way to step down to the statically unchecked system 
 	       of hmatrix. This is cheap in comparison to representing
-	       unknown sizes with exisential types, which forces rampant
+	       unknown sizes with exisential types, which forces pervasive
 	       continuation passing style.
 Category:      Math
 Tested-with:   GHC == 6.10.1
