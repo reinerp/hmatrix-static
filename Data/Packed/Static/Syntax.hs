@@ -18,7 +18,9 @@
 
 module Data.Packed.Static.Syntax(
     mat,
+    matU,
     vec,
+    vecU,
     -- * Matrix views
     MatView,
     viewMat,
@@ -81,6 +83,14 @@ viewMat m = shapeOf m :>< toLists m
 mat :: QuasiQuoter
 mat = QuasiQuoter parseMatExp parseMatPat
 
+{- | Quasiquoter for matrices of Unknown size. We should
+just use @[$matU|\<text\>|]@ as shorthand for @'forgetShapeU' [$mat|\<text\>|]@.
+
+No pattern quasiquoter exists, and I currently have
+no plans to introduce one. -}
+matU :: QuasiQuoter
+matU = QuasiQuoter parseMatUExp (error "No pattern quasiquoter for matU. Use mat instead")
+
 parseMat p s = do
   xs <- parsecToQ (sepBy (sepBy p comma) semi) s
   let rows = length xs
@@ -92,6 +102,10 @@ parseMatExp s = do
   (xs,rows,cols) <- parseMat expr s
   [| ( $(decLiteralV $ fromIntegral rows) >< $(decLiteralV $ fromIntegral cols) )
                 $(return $ ListE (concat xs)) |]
+
+parseMatUExp s = do
+  (xs,rows,cols) <- parseMat expr s
+  [| fromListsU $(return $ ListE (map ListE xs)) |]
 
 parseMatPat s = do
   (xs,rows,cols) <- parseMat identifier s
@@ -124,6 +138,11 @@ viewVec v = shapeOf v :|> toList v
 vec :: QuasiQuoter
 vec = QuasiQuoter parseVecExp parseVecPat
 
+{- | Quasiquoter for vectors of unknown lengths. Like 'matU', 
+@[$vecU|\<text\>|]@ is just shorthand for @'forgetShapeU' [$vec|\<text\>|]@. -}
+vecU :: QuasiQuoter
+vecU = QuasiQuoter parseVecUExp (error "No pattern quasiquoter for vecU. Use the vec quasiquoter instead")
+
 --- Vec pattern parser
 parseVec p s = parsecToQ (sepBy p comma) s
 
@@ -131,6 +150,8 @@ parseVecPat s = do
   xs <- parseVec identifier s
   conP '(:|>) [ sigP wildP (decLiteralT $ fromIntegral $ length xs)
                          , return $ ListP (map (VarP . mkName) xs)  ]
+
+parseVecUExp s = [| fromListU $(ListE `liftM` parseVec expr s) |]
 
 parseVecExp s = do
   xs <- parseVec expr s
