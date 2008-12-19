@@ -54,7 +54,6 @@ rcond :: (H.Field t) => Matrix (m,n) t -> Double
 rcond = H.rcond . unMatrix
 
 --------- SVD
--- | The vector's length is the minimum of m and n.
 svd :: (H.Field t) => Matrix (m,n) t ->
    (Matrix (m,m) t, Vector (Min m n) Double, Matrix (n,n) t)
 svd = svdBody

@@ -84,7 +84,6 @@ instance ShapedContainer Matrix where
     unsafeReshape = Matrix . unMatrix
 
 ------ Shaping
--- TODO: turn IntegerT constraint into PositiveT constraint
 refineMat :: forall m n t a. Matrix (m,n) t -> (forall m' n'. (PositiveT m', PositiveT n') => Matrix (m', n') t -> a) -> a
 refineMat m k = fromJust.fromJust $ reifyPositiveD (toInteger $ rows m) (\r ->
                    reifyPositiveD (toInteger $ cols m) (\c -> 
