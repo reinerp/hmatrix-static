@@ -20,7 +20,7 @@ Description:   A thin, lightweight wrapper over hmatrix to support
 	       continuation passing style.
 Category:      Math
 Tested-with:   GHC == 6.10.1
-Cabal-Version: >= 1.2
+Cabal-Version: >= 1.6
 build-type:    Simple
 
 Library
