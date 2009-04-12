@@ -18,6 +18,10 @@ Description:   A thin, lightweight wrapper over hmatrix to support
 	       of hmatrix. This is cheap in comparison to representing
 	       unknown sizes with exisential types, which forces pervasive
 	       continuation passing style.
+	       .	    
+	       WARNING: when using the QuasiQuoting in this package, 
+	       be aware of infix expressions. See the note in 
+	       "Data.Packed.Static.Syntax" for details.
 Category:      Math
 Tested-with:   GHC == 6.10.1
 Cabal-Version: >= 1.6

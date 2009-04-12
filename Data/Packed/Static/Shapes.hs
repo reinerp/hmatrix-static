@@ -25,27 +25,55 @@ module Data.Packed.Static.Shapes (
 
 import qualified Numeric.LinearAlgebra as H
 
+-- | Uninhabited type. Represents unknown lengths.
+-- Instances of 'ShapedContainer' use 'Unknown'
+-- for the 'UnknownShape' type.
 data Unknown
 
 class ShapedContainer a where
-    -- | Typed representation
+    -- | Less-typed, hmatrix representation
     type Unwrapped a :: * -> *
+    -- | Convert to hmatrix representation
     unWrap :: a s t -> Unwrapped a t
+    -- | Convert from hmatrix representation
     wrapU :: Unwrapped a t -> a (UnknownShape a) t
     
     -- | standard \'unknown\' shape. For vectors, @Unknown@; for matrices, @(Unknown,Unknown)@.
     type UnknownShape a
+    -- | Coerce the static shape. Unsafe; the user
+    -- of this function has an obligation to prove that
+    -- the object's dynamic shape is the same as that
+    -- represented by s'.
     unsafeReshape :: a s t -> a s' t
 
+-- | For type hints.
+-- 
+-- @\> constant (5::Double) `atShape` d4
+-- [$vec| 5.0, 5.0, 5.0, 5.0 |] :: Vector D4 Double@
+--
+-- Implementation:
+-- 
+-- @atShape = const@.
 atShape :: a s t -> s -> a s t
 atShape = const
 
+-- | For type hints.
+--
+-- @\> constant (5::Double) `atShape` shapeOf [$vec|1|]
+-- [$vec| 5.0 |]@
+--
+-- Implementation:
+--
+-- @shapeOf _ = undefined@
 shapeOf :: a s t -> s
 shapeOf _ = undefined
 
+-- | @unsafeWrap = unsafeReshape . wrapU@.
 unsafeWrap :: ShapedContainer a => Unwrapped a t -> a s t
 unsafeWrap = unsafeReshape . wrapU
 
+-- | Changes the static shape to the UnknownShape.
+-- Dynamic representation is unchanged.
 forgetShapeU :: ShapedContainer a => a s t -> a (UnknownShape a) t
 forgetShapeU = unsafeReshape
 

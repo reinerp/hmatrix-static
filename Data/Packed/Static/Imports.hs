@@ -8,7 +8,8 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- Useful imports from other packages
+-- Useful imports from other packages. In particular:
+-- imports from TFP, Foreign.Storable, and HMatrix.
 --
 -----------------------------------------------------------------------------
 

@@ -452,15 +452,19 @@ liftMatrix2 :: (Element t, Element a, Element b) =>
                -> Matrix (m,n) t
 liftMatrix2 f a b = Matrix $ H.liftMatrix2 (\v w -> unVector $ f (Vector v) (Vector w)) (unMatrix a) (unMatrix b)
 
+-- | See hmatrix's 'H.format'.
 format :: (Element t) => String -> (t -> String) -> Matrix (m,n) t -> String
 format s f = H.format s f . unMatrix
 
+-- | See hmatrix's 'H.readMatrix'.
 readMatrix :: String -> Matrix (Unknown,Unknown) Double
 readMatrix = wrapU . H.readMatrix
 
+-- | See hmatrix's 'H.fromFile'.
 fromFile :: FilePath -> (Int, Int) -> IO (Matrix (Unknown,Unknown) Double)
 fromFile f s = fmap wrapU $ H.fromFile f s
 
+-- | See hmatrix's 'H.fromArray2D'.
 fromArray2D :: (Element t) => Array (Int, Int) t -> Matrix (Unknown,Unknown) t
 fromArray2D = wrapU . H.fromArray2D
 
