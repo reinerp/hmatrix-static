@@ -12,8 +12,69 @@
 --
 -----------------------------------------------------------------------------
 
+module Numeric.LinearAlgebra.Static.Algorithms(
+    -- * Type hints
+    matT,
+    vecT,
+    doubleT,
+    complexT,
+    -- * Multiplication                                           
+    Mul(..),
+    (<.>),
+    -- * Concatenating
+    (<->),
+    (<|>),
+    -- * Solving \/ inverting
+    (<\>),
+    linearSolve,
+    inv,
+    pinv,
+    -- * Determinant \/ rank \/ condition number
+    det,
+    rank,
+    rcond,
+    -- * Eigensystems
+    eig,
+    eigSH,
 
-module Numeric.LinearAlgebra.Static.Algorithms where
+    -- * Factorisations
+    -- ** SVD
+    svd,
+    fullSVD,
+    economySVDU,
+    -- ** QR
+    qr,
+    -- ** Cholesky
+    chol,
+    -- ** Hessenberg
+    hess,
+    -- ** Schur
+    schur,
+    -- ** LU
+    lu,
+    luPacked,
+    luSolve,
+
+    -- * Matrix functions
+    expm,
+    sqrtm,
+    matFunc,
+    
+    -- * Nullspace
+    nullspacePrec,
+    nullVector,
+
+    -- * Norms
+    pnorm,
+    H.NormType(..),
+
+    -- * Misc
+    ctrans,
+    eps,
+    i,
+    outer,
+    kronecker,
+ ) where
 
 import Data.Complex
 
@@ -25,15 +86,93 @@ import Data.Packed.Static
 import Data.Packed.Static.Internal
 
 import qualified Numeric.LinearAlgebra as H
+import           Numeric.LinearAlgebra(pnorm)
 
-import Unsafe.Coerce
+matT :: Matrix s t -> a
+matT = const undefined
 
-multiply :: (H.Field t) =>
-            Matrix (m,n) t -> Matrix (n,p) t -> Matrix (m,p) t
-multiply a b = Matrix $ H.multiply (unMatrix a) (unMatrix b)
+vecT :: Vector s t -> a
+vecT = const undefined
 
-dot :: (H.Field t) => Vector n t -> Vector n t -> t
-dot a b = H.dot (unVector a) (unVector b)
+doubleT :: a s Double -> x
+doubleT = const undefined
+
+complexT :: a s (Complex Double) -> x
+complexT = const undefined
+
+class Mul a b where
+    -- | Overloaded matrix-matrix, matrix-vector, or vector-matrix product.
+    --   The instances have type equalities to improve the quality of
+    --   type inference.
+    (<>) :: Field t => a t -> b t -> MulResult a b t
+    type MulResult a b :: * -> *
+
+instance (n ~ n') => Mul (Matrix (m,n)) (Matrix (n',p)) where
+    a <> b = Matrix $ H.multiply (unMatrix a) (unMatrix b)
+    type MulResult (Matrix (m,n)) (Matrix (n',p)) = Matrix (m,p)
+
+instance (n ~ n') => Mul (Matrix (m,n)) (Vector n') where
+    m <> v = Vector (unMatrix m H.<> unVector v)
+    type MulResult (Matrix (m,n)) (Vector n') = Vector m
+
+instance (m ~ m') => Mul (Vector m) (Matrix (m',n)) where
+    v <> m = Vector (unVector v H.<> unMatrix m)
+    type MulResult (Vector m) (Matrix (m',n)) = Vector n
+
+-- | Dot product
+(<.>) :: (Field t) => Vector n t -> Vector n t -> t
+a <.> b = H.dot (unVector a) (unVector b)
+
+class JoinableV a b where
+    type JoinShapeV a b :: *
+    -- | Overloaded matrix-matrix, matrix-vector, vector-matrix, or vector-vector
+    --   vertical concatenation. The instances have type equalities
+    --   to improve the quality of type inference.
+    (<->) :: Element t => a t -> b t -> Matrix (JoinShapeV a b) t
+
+instance JoinableV (Matrix (m,n)) (Matrix (p,n)) where
+    type JoinShapeV (Matrix (m,n)) (Matrix (p,n)) = (m :+: p, n)
+    m <-> n = Matrix (unMatrix m H.<-> unMatrix n)
+
+instance JoinableV (Matrix (m,n)) (Vector n) where
+    type JoinShapeV (Matrix (m,n)) (Vector n) = (m :+: D1, n)
+    m <-> v = m <-> asRow v
+
+instance JoinableV (Vector n) (Matrix (m,n)) where
+    type JoinShapeV (Vector n) (Matrix (m,n)) = (D1 :+: m, n)
+    v <-> m = asRow v <-> m
+
+instance JoinableV (Vector n) (Vector n) where
+    type JoinShapeV (Vector n) (Vector n) = (D2, n)
+    v <-> w = asRow v <-> w
+
+class JoinableH a b where
+    type JoinShapeH a b :: *
+    -- | Overloaded matrix-matrix, matrix-vector, vector-matrix,
+    --   or vector-vector horizontal concatenation. The
+    --   instances have type equalities to
+    --   improve the quality of type inference.
+    (<|>) :: Element t => a t -> b t -> Matrix (JoinShapeH a b) t
+
+instance JoinableH (Matrix (m,n)) (Matrix (m,p)) where
+    type JoinShapeH (Matrix (m,n)) (Matrix (m,p)) = (m,n:+:p)
+    m <|> n = Matrix (unMatrix m H.<|> unMatrix n)
+
+instance JoinableH (Matrix (m,n)) (Vector m) where
+    type JoinShapeH (Matrix (m,n)) (Vector m) = (m,n:+:D1)
+    m <|> v = m <|> asColumn v
+
+instance JoinableH (Vector m) (Matrix (m,n)) where
+    type JoinShapeH (Vector m) (Matrix (m,n)) = (m,D1 :+: n)
+    v <|> m = asColumn v <|> m
+
+instance JoinableH (Vector m) (Vector m) where
+    type JoinShapeH (Vector m) (Vector m) = (m,D2)
+    v <|> w = asColumn v <|> w
+
+-- | Least squares solution of a linear equation.
+(<\>) :: Field t => Matrix (m,n) t -> Vector m t -> Vector n t
+(<\>) m = Vector . (H.<\>) (unMatrix m) . unVector
 
 linearSolve :: (H.Field t) => Matrix (m,m) t -> Matrix (m,n) t -> Matrix (m,n) t
 linearSolve a b = Matrix $ H.multiply (unMatrix a) (unMatrix b)
@@ -173,3 +312,4 @@ kronecker m n = Matrix $ H.kronecker (unMatrix m) (unMatrix n)
 
 ----
 -- omitted: haussholder, unpackQR, unpackHess
+
