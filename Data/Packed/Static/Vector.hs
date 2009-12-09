@@ -191,7 +191,7 @@ vectorMaxIndex = H.vectorMaxIndex . unVector
 [$vec| 2.0, 4.0, 6.0 |]@
 -}
 liftVector :: (Storable a, Storable b) => (a -> b) -> Vector n a -> Vector n b
-liftVector f = Vector . H.liftVector f . unVector
+liftVector f = Vector . H.mapVector f . unVector
 
 --- note: this requires they are of the same size, whereas hmatrix allows
 --- different sizes; it uses the minimum size.
@@ -202,7 +202,7 @@ liftVector f = Vector . H.liftVector f . unVector
 -}
 liftVector2 :: (Storable a, Storable b, Storable c) =>
                (a -> b -> c) -> Vector n a -> Vector n b -> Vector n c
-liftVector2 f v1 v2 = Vector $ H.liftVector2 f (unVector v1) (unVector v2)
+liftVector2 f v1 v2 = Vector $ H.zipVector f (unVector v1) (unVector v2)
 
 instance (Storable e, Show e) => Show (Vector n e) where
     show v = "[$vec| " ++ intercalate ", " (map show $ toList v) ++ " |]"
