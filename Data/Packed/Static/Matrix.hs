@@ -24,6 +24,8 @@ module Data.Packed.Static.Matrix(
   withRows,
   withCols,
   withSquare,
+  -- * By-index construction
+  buildMatrix,
   -- * To/from lists
   (><),
   matFromList,
@@ -137,6 +139,17 @@ withCols = ($ n) where
 withSquare :: forall n t. PositiveT n => (Int -> Matrix (n,n) t) -> Matrix (n,n) t
 withSquare = ($ n) where
     n = fromIntegerT (undefined :: n)
+
+--------- by-index construction
+{- | Constructs a matrix using the function from row\/column index. The first of the pair is the row; the second is the column. Indexing is 0-based.
+
+@\> buildMatrix (fromIntegral . uncurry (^)) \`atShape\` (d3,d4)
+[$mat| 1.0, 0.0, 0.0, 0.0;
+       1.0, 1.0, 1.0, 1.0;
+       1.0, 2.0, 4.0, 8.0 |]@
+-}
+buildMatrix :: (PositiveT m, PositiveT n, Element a) => ((Int, Int) -> a) -> Matrix (m,n) a
+buildMatrix f = withShape (\m n -> Matrix (H.buildMatrix m n f))
 
 --------- to/from lists
 {- | Constructs a matrix from a list. The size

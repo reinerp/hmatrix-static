@@ -37,6 +37,12 @@ testAtCols = ident `atCols` d4
 --          0.0, 0.0, 1.0, 0.0;
 --          0.0, 0.0, 0.0, 1.0 |]
 
+testBuildMatrix :: Matrix (D3, D4) Double
+testBuildMatrix = buildMatrix (fromIntegral . uncurry (^)) `atShape` (d3,d4)
+-- > [$mat| 1.0, 0.0, 0.0, 0.0;
+--          1.0, 1.0, 1.0, 1.0;
+--          1.0, 2.0, 4.0, 8.0 |]
+
 testCross :: Matrix (D2, D3) Double
 testCross = (d2 >< d3)[1,2,3,4,5,6]
 -- > [$mat| 1.0, 2.0, 3.0;

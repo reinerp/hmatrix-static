@@ -49,5 +49,5 @@ Library
        Rank2Types, TypeFamilies, TypeOperators,
        EmptyDataDecls, TemplateHaskell
 
-  Build-Depends: base==4.*, hmatrix>=0.5&&<0.7, tfp==0.2.*, array==0.2.*, 
+  Build-Depends: base==4.*, hmatrix==0.7.*, tfp==0.2.*, array==0.2.*, 
                  haskell-src-meta>=0.0.3.1&&<0.0.7, parsec==3.*, template-haskell

@@ -39,6 +39,10 @@ testAtShape :: Vector D5 Double
 testAtShape = constant 1 `atShape` d5
 -- > [$vec| 1.0, 1.0, 1.0, 1.0, 1.0 |]
 
+testBuildVector :: Vector D5 Double
+testBuildVector = buildVector fromIntegral `atShape` d5
+-- > [$vec| 0.0, 1.0, 2.0, 3.0, 4.0 |]
+
 testFromListU :: Vector Unknown Double
 testFromListU = fromListU [1,2,3,4,5]
 -- > [$vec| 1.0, 2.0, 3.0, 4.0, 5.0 |]

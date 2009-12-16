@@ -19,6 +19,8 @@ module Data.Packed.Static.Vector(
    refineVec,
    atDim,
    atShape,
+   -- * Construction by index
+   buildVector,
    -- * To/from lists
    fromListU,
    toList,
@@ -77,6 +79,16 @@ withDim f = f n where
 atDim :: (forall n. PositiveT n => Vector n t) -> Int -> Vector Unknown t
 atDim v n | n > 0     = fromJust $ reifyPositiveD (toInteger n) (\n -> forgetShapeU $ v `atShape` n)
           | otherwise = error $ "atDim: negative vector length: " ++ show n
+
+------- By-index construction
+{- | Builds a vector given a function from indices. Indexing is 0-based.
+
+@\> buildVector fromIntegral \`atShape\` d5
+[$vec| 0.0, 1.0, 2.0, 3.0, 4.0 |]@
+-}
+buildVector :: (PositiveT n, Element a) => (Int -> a) -> Vector n a
+buildVector f = withDim (\len -> Vector $ H.buildVector len f)
+
 
 -------- To / from lists
 {- | Constructs a vector from all the elements of a list.
