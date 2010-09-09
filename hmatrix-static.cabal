@@ -1,5 +1,5 @@
 Name:          hmatrix-static
-Version:       0.3
+Version:       0.3.0.1
 Synopsis:      hmatrix with vector and matrix sizes encoded in types
 License:       GPL
 License-file:  LICENSE
@@ -49,5 +49,11 @@ Library
        Rank2Types, TypeFamilies, TypeOperators,
        EmptyDataDecls, TemplateHaskell
 
-  Build-Depends: base==4.*, hmatrix==0.7.*, tfp==0.2.*, array==0.2.*, 
-                 haskell-src-meta>=0.0.3.1&&<0.0.7, parsec==3.*, template-haskell
+  Build-Depends: base >= 3 && <5,
+                 hmatrix >= 0.7 && < 0.9,
+                 tfp==0.2.*, 
+                 array >= 0.2 && < 0.4, 
+                 haskell-src-meta >= 0.0.3.1 && < 0.2,
+                 parsec >= 3.0 && < 3.2,
+                 template-haskell
+
