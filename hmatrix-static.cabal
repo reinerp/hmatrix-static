@@ -1,5 +1,5 @@
 Name:          hmatrix-static
-Version:       0.3.0.1
+Version:       0.3.0.2
 Synopsis:      hmatrix with vector and matrix sizes encoded in types
 License:       GPL
 License-file:  LICENSE
