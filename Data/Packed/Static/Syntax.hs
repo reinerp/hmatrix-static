@@ -42,10 +42,9 @@ import Data.Packed.Static.Shapes
 import Data.Packed.Static.Vector
 import Data.Packed.Static.Matrix
 
-import Text.Parsec
-import Text.Parsec.Language
-import Text.Parsec.String(Parser)
-import qualified Text.Parsec.Token as T
+import Text.ParserCombinators.Parsec
+import Text.ParserCombinators.Parsec.Language
+import qualified Text.ParserCombinators.Parsec.Token as T
 
 
 import Foreign.Storable
